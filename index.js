@@ -35,8 +35,21 @@ const server = http.createServer((request, response) => {
         if(err){
             // err usually means page not found
             if(err.code == 'ENOENT'){
-
+                fs.readFile(path.join(__dirname, 'public', '404.html'), (err, content) => {
+                    response.writeHead(200, { 'Content-Type': 'text/html'});
+                    response.end(content, 'utf-8');
+                })
             }
+            else{
+                // a server error
+                response.writeHead(500);
+                response.end(`Server Error: ${err.code}`);
+            }
+        }
+        else{
+            // success
+            response.writeHead(200, { 'Content-Type': contentType });
+            response.end(content, 'utf-8');
         }
     })
 });
